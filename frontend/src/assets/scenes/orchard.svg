@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="orchardSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#bfe4f7"/>
+      <stop offset="55%" stop-color="#e4f5fb"/>
+      <stop offset="100%" stop-color="#eafaef"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7fc08d"/>
+      <stop offset="100%" stop-color="#4f9a67"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#orchardSky)"/>
+  <circle cx="1280" cy="190" r="80" fill="#ffe9ab"/>
+  <circle cx="1280" cy="190" r="140" fill="#fff6d8" opacity="0.7"/>
+  <path d="M0 620 Q 400 500 800 600 T 1600 560 L1600 900 L0 900 Z" fill="url(#hill)"/>
+  <g>
+    <rect x="250" y="520" width="28" height="200" fill="#7a5a34"/>
+    <circle cx="263" cy="470" r="150" fill="#67b877"/>
+    <circle cx="150" cy="520" r="100" fill="#57a869"/>
+    <circle cx="376" cy="520" r="100" fill="#57a869"/>
+    <g fill="#e8446e">
+      <circle cx="200" cy="440" r="15"/><circle cx="270" cy="400" r="15"/><circle cx="330" cy="470" r="15"/>
+      <circle cx="240" cy="510" r="15"/><circle cx="300" cy="530" r="15"/><circle cx="180" cy="500" r="15"/>
+      <circle cx="360" cy="510" r="15"/>
+    </g>
+  </g>
+  <g>
+    <rect x="1180" y="540" width="28" height="190" fill="#7a5a34"/>
+    <circle cx="1193" cy="490" r="150" fill="#67b877"/>
+    <circle cx="1080" cy="540" r="100" fill="#57a869"/>
+    <circle cx="1306" cy="540" r="100" fill="#57a869"/>
+    <g fill="#e8446e">
+      <circle cx="1130" cy="460" r="15"/><circle cx="1200" cy="420" r="15"/><circle cx="1260" cy="490" r="15"/>
+      <circle cx="1170" cy="530" r="15"/><circle cx="1230" cy="550" r="15"/><circle cx="1110" cy="520" r="15"/>
+    </g>
+  </g>
+  <g transform="translate(700 660)">
+    <path d="M0 0 L220 0 L200 120 L20 120 Z" fill="#c78a4c"/>
+    <path d="M20 30 L200 30 M18 60 L202 60 M16 90 L204 90" stroke="#a06a33" stroke-width="6"/>
+    <g fill="#e8446e">
+      <circle cx="50" cy="18" r="17"/><circle cx="100" cy="10" r="17"/><circle cx="150" cy="18" r="17"/><circle cx="80" cy="34" r="17"/><circle cx="130" cy="34" r="17"/>
+    </g>
+  </g>
+</svg>

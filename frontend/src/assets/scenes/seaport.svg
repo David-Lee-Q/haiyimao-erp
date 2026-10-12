@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#bfe3f7"/>
+      <stop offset="60%" stop-color="#dff1fb"/>
+      <stop offset="100%" stop-color="#eef8fd"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4aa7d6"/>
+      <stop offset="100%" stop-color="#1f6f9e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1180" cy="230" r="90" fill="#ffe9ab"/>
+  <circle cx="1180" cy="230" r="150" fill="#fff3cf" opacity="0.6"/>
+  <rect y="560" width="1600" height="340" fill="url(#sea)"/>
+  <g opacity="0.45" fill="none" stroke="#dff2ff" stroke-width="3">
+    <path d="M0 640 Q 200 620 400 640 T 800 640 T 1200 640 T 1600 640"/>
+    <path d="M0 700 Q 200 680 400 700 T 800 700 T 1200 700 T 1600 700"/>
+  </g>
+  <rect x="0" y="558" width="920" height="36" fill="#c9d6df"/>
+  <rect x="0" y="540" width="920" height="20" fill="#aebccb"/>
+  <g>
+    <rect x="70" y="500" width="120" height="58" fill="#e8624f"/>
+    <rect x="200" y="500" width="120" height="58" fill="#33a86e"/>
+    <rect x="330" y="500" width="120" height="58" fill="#f0a93d"/>
+    <rect x="70" y="436" width="120" height="58" fill="#4a8fe0"/>
+    <rect x="200" y="436" width="120" height="58" fill="#e8624f"/>
+    <rect x="460" y="500" width="120" height="58" fill="#4a8fe0"/>
+    <rect x="590" y="500" width="120" height="58" fill="#33a86e"/>
+    <rect x="460" y="436" width="120" height="58" fill="#f0a93d"/>
+    <rect x="330" y="436" width="120" height="58" fill="#8a6be0"/>
+  </g>
+  <g stroke="#5a6b7a" stroke-width="10" fill="none">
+    <path d="M300 556 L300 250 L720 250 L720 556"/>
+  </g>
+  <rect x="470" y="250" width="60" height="66" fill="#5a6b7a"/>
+  <path d="M500 316 L500 430" stroke="#5a6b7a" stroke-width="4"/>
+  <g transform="translate(1040 512)">
+    <path d="M0 44 L430 44 L388 116 L42 116 Z" fill="#2f4f6b"/>
+    <rect x="70" y="-62" width="270" height="106" fill="#f4f8fb"/>
+    <rect x="90" y="-42" width="72" height="32" fill="#9ed4f2"/>
+    <rect x="184" y="-42" width="72" height="32" fill="#9ed4f2"/>
+    <rect x="266" y="-96" width="42" height="140" fill="#5a7387"/>
+    <rect x="150" y="10" width="62" height="34" fill="#e8624f"/>
+    <rect x="222" y="10" width="62" height="34" fill="#33a86e"/>
+  </g>
+  <!-- 云 -->
+  <g fill="#ffffff" opacity="0.75">
+    <ellipse cx="360" cy="170" rx="90" ry="34"/>
+    <ellipse cx="430" cy="160" rx="60" ry="30"/>
+    <ellipse cx="900" cy="140" rx="80" ry="30"/>
+  </g>
+</svg>

@@ -15,6 +15,7 @@ const pages = [
   { file: 'purchase-detail.png', route: '/purchase/order/1', wait: 1400 },
   { file: 'shipment-list.png', route: '/shipment/batches', wait: 6000, full: true },
   { file: 'shipment-detail.png', route: '/shipment/batch/1', wait: 1400 },
+  { file: 'global-overview.png', route: '/shipment/global', wait: 8000 },
   { file: 'wms-inbound.png', route: '/wms/inbound', wait: 1400 },
   { file: 'wms-inventory.png', route: '/wms/inventory', wait: 1400 },
   { file: 'finance-landcost.png', route: '/finance/land-cost', wait: 1400 },
@@ -25,6 +26,8 @@ const pages = [
   { file: 'users.png', route: '/users', wait: 1200 },
   { file: 'audit-logs.png', route: '/audit-logs', wait: 1200 },
   { file: 'profile.png', route: '/profile', wait: 1000 },
+  { file: 'ai-assistant.png', route: '/ai', wait: 2500 },
+  { file: 'changelog.png', route: '/changelog', wait: 1500, full: true },
 ];
 
 async function main() {

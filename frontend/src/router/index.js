@@ -11,6 +11,7 @@ const routes = [
     children: [
       { path: 'dashboard', name: 'dashboard', component: () => import('../views/Dashboard.vue'), meta: { title: '经营概览', permission: 'dashboard:view' } },
       { path: 'help', name: 'help', component: () => import('../views/Help.vue'), meta: { title: '帮助中心' } },
+      { path: 'changelog', name: 'changelog', component: () => import('../views/Changelog.vue'), meta: { title: '版本记录' } },
       { path: 'ai', name: 'ai', component: () => import('../views/AiAssistant.vue'), meta: { title: '智能助手', permission: 'ai:use' } },
 
       { path: 'suppliers', name: 'suppliers', component: () => import('../views/SupplierList.vue'), meta: { title: '供应商管理', permission: 'supplier:view' } },

@@ -43,6 +43,7 @@
     <el-menu-item v-if="can('approval:view')" index="/approvals"><el-icon><Checked /></el-icon><span>审批中心</span></el-menu-item>
 
     <el-menu-item index="/help"><el-icon><QuestionFilled /></el-icon><span>帮助中心</span></el-menu-item>
+    <el-menu-item index="/changelog"><el-icon><Clock /></el-icon><span>版本记录</span></el-menu-item>
 
     <el-sub-menu v-if="can('user:view') || can('audit:view')" index="system">
       <template #title><el-icon><Setting /></el-icon><span>系统管理</span></template>

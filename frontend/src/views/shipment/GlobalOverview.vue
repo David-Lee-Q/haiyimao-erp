@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="stat-grid">
+    <div class="status-grid">
       <div v-for="s in legend" :key="s.status" class="stat-card">
         <div class="label"><i class="dot" :style="{ background: s.color }"></i>{{ s.label }}</div>
         <div class="value">{{ counts[s.status] || 0 }}</div>
@@ -56,6 +56,17 @@ onMounted(load);
 </script>
 
 <style scoped>
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+}
+.status-grid .stat-card {
+  padding: 16px 14px;
+}
+.status-grid .stat-card .value {
+  font-size: 24px;
+}
 .dot {
   display: inline-block;
   width: 10px;
@@ -63,5 +74,11 @@ onMounted(load);
   border-radius: 3px;
   margin-right: 6px;
   vertical-align: middle;
+}
+@media (max-width: 1200px) {
+  .status-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .status-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>

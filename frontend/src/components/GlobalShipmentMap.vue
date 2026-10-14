@@ -161,12 +161,12 @@ onBeforeUnmount(() => {
 .lg-item b { color: #16508f; }
 .global-globe {
   width: 100%;
-  height: 520px;
+  height: 700px;
   border-radius: 12px;
   overflow: hidden;
   background: radial-gradient(circle at 50% 40%, #0a2b4a 0%, #04121f 70%);
 }
 @media (max-width: 768px) {
-  .global-globe { height: 360px; }
+  .global-globe { height: 420px; }
 }
 </style>

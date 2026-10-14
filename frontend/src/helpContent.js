@@ -80,11 +80,24 @@ const M = {
     key: 'shipment-list',
     title: '货运批次列表',
     img: 'shipment-list.png',
-    desc: '国际货运批次总览，展示船名航次、柜号、起运/目的港与单证进度。',
+    desc: '国际货运批次总览，展示船名航次、柜号、起运/目的港与单证进度；点击「定位」可查看该批次的 3D 海图轨迹。',
     points: [
       '「单证进度」显示已上传必需单证数 / 必需单证总数，未齐时显示橙色。',
       '点击「控制台」进入批次详情进行节点推进与单证核销。',
+      '点击「定位」打开该批次的 3D 海图，查看航线、当前位置与节点时间线。',
       '有删除权限时可删除未生成库存的批次。',
+    ],
+  },
+  globalShipment: {
+    key: 'global-shipment',
+    title: '全球货运态势',
+    img: 'global-overview.png',
+    desc: '「国际货运」子菜单页面，以真实 3D 地球（国境线、国家、城市）展示全部货运批次：按状态着色的航线与货物当前位置，并统计各状态批次数量。',
+    points: [
+      '顶部 6 张卡片按状态统计批次数量：离港 / 海运空运中 / 到港 / 报关清关中 / 放行 / 已入库。',
+      '地球标注国境线与国家（悬停显示名称）、主要城市；航线「已航行」段为实线，「剩余」段为动画虚线。',
+      '悬停货物位置可查看批次号、状态、航行进度与起运/目的港。',
+      '支持拖动旋转、滚轮缩放与慢速自转。',
     ],
   },
   shipmentDetail: {
@@ -219,32 +232,32 @@ const ROLES = {
   admin: {
     label: '系统管理员',
     summary: '拥有全部功能权限，负责系统基础数据、用户与角色、以及全流程的监督与运维。',
-    modules: [M.dashboard, M.ai, M.users, M.audit, M.suppliers, M.purchaseList, M.purchaseDetail, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.approvals, M.profile],
+    modules: [M.dashboard, M.ai, M.users, M.audit, M.suppliers, M.purchaseList, M.purchaseDetail, M.shipmentList, M.globalShipment, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.approvals, M.profile],
   },
   manager: {
     label: '采购经理',
     summary: '负责采购订单的审批与全流程管控、供应商维护、货运与库存监督，并可查看经营与财务数据。',
-    modules: [M.dashboard, M.ai, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.approvals, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.audit, M.profile],
+    modules: [M.dashboard, M.ai, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.approvals, M.shipmentList, M.globalShipment, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.audit, M.profile],
   },
   purchase: {
     label: '采购员',
     summary: '负责采购订单的创建、编辑与提交，跟进国际货运，并可创建销售出库单。仅能查看本人创建的采购订单。',
-    modules: [M.dashboard, M.ai, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.shipmentList, M.shipmentDetail, M.salesOrders, M.profile],
+    modules: [M.dashboard, M.ai, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.shipmentList, M.globalShipment, M.shipmentDetail, M.salesOrders, M.profile],
   },
   warehouse: {
     label: '仓储主管',
     summary: '负责到货入库理算、库存批次管理、盘点调整与调拨，以及货运节点与单证维护。',
-    modules: [M.dashboard, M.ai, M.purchaseList, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.salesOrders, M.monitor, M.profile],
+    modules: [M.dashboard, M.ai, M.purchaseList, M.shipmentList, M.globalShipment, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.salesOrders, M.monitor, M.profile],
   },
   finance: {
     label: '财务专员',
     summary: '负责落地成本分摊与关税/增值税倒算，生成财务应付凭证，并可导出采购订单、查看操作日志。',
-    modules: [M.dashboard, M.ai, M.purchaseList, M.purchaseDetail, M.financeLandcost, M.financeCustoms, M.shipmentList, M.wmsInventory, M.audit, M.profile],
+    modules: [M.dashboard, M.ai, M.purchaseList, M.purchaseDetail, M.financeLandcost, M.financeCustoms, M.shipmentList, M.globalShipment, M.wmsInventory, M.audit, M.profile],
   },
   quality: {
     label: '生鲜品质主管',
     summary: '负责冷链温控监控与温度告警处理，参与磅差理赔、临期批次强制出库与采购审批。',
-    modules: [M.dashboard, M.ai, M.monitor, M.approvals, M.purchaseList, M.shipmentList, M.wmsInventory, M.profile],
+    modules: [M.dashboard, M.ai, M.monitor, M.approvals, M.purchaseList, M.shipmentList, M.globalShipment, M.wmsInventory, M.profile],
   },
 };
 

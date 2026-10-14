@@ -7,6 +7,7 @@
       </div>
       <div>
         <el-button @click="$router.push('/shipment/batches')">返回列表</el-button>
+        <el-button :icon="Location" @click="trackVisible = true">货运海图</el-button>
         <el-button v-if="can('shipment:manage')" :icon="Edit" @click="openEditShipment">编辑货运信息</el-button>
         <el-button v-if="can('shipment:manage') && detail.current_step_index < steps.length - 1" type="primary" :loading="advancing" @click="advance">
           推进至「{{ steps[detail.current_step_index + 1] ? SHIPMENT_STATUS_LABEL[steps[detail.current_step_index + 1]] : '-' }}」
@@ -23,7 +24,7 @@
     </div>
 
     <el-row :gutter="16">
-      <el-col :span="14">
+      <el-col :xs="24" :md="14">
         <div class="card-block">
           <h3>提单 / 运输信息</h3>
           <el-descriptions :column="2" border size="small">
@@ -38,7 +39,7 @@
           </el-descriptions>
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :xs="24" :md="10">
         <div class="card-block">
           <h3>单证完整性</h3>
           <el-progress type="dashboard" :percentage="docPercent" :color="docPercent >= 100 ? '#67c23a' : '#e6a23c'" />
@@ -101,8 +102,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="editVisible" title="编辑货运信息" width="560px">
-      <el-form :model="editForm" label-width="120px">
+    <el-dialog v-model="editVisible" title="编辑货运信息" width="560px">      <el-form :model="editForm" label-width="120px">
         <el-form-item label="船名/航次"><el-input v-model="editForm.vessel" /></el-form-item>
         <el-form-item label="集装箱号"><el-input v-model="editForm.container_no" /></el-form-item>
         <el-form-item label="封号"><el-input v-model="editForm.seal_no" /></el-form-item>
@@ -118,18 +118,23 @@
         <el-button type="primary" :loading="savingEdit" @click="saveShipment">保存</el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="trackVisible" :title="`货运海图 · ${detail.shipment?.shipment_code || ''}`" width="960px" top="6vh" destroy-on-close>
+      <ShipmentTrack v-if="trackVisible" :shipment-id="$route.params.id" />
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { Edit } from '@element-plus/icons-vue';
+import { Edit, Location } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import api, { toastError } from '../../api';
 import StatusTag from '../../components/StatusTag.vue';
 import FileUpload from '../../components/FileUpload.vue';
 import AttachmentList from '../../components/AttachmentList.vue';
+import ShipmentTrack from '../../components/ShipmentTrack.vue';
 import { downloadFileById } from '../../utils/file';
 import { SHIPMENT_STATUS_LABEL, SHIPMENT_STEPS } from '../../statusMap';
 import { useAuthStore } from '../../store/auth';
@@ -146,6 +151,7 @@ const savingEdit = ref(false);
 const detail = ref({});
 const uploadVisible = ref(false);
 const editVisible = ref(false);
+const trackVisible = ref(false);
 const currentDoc = ref(null);
 const uploadForm = reactive({ file_name: '', file_id: null, key_fields: {} });
 const editForm = reactive({});

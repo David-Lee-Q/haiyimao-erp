@@ -259,9 +259,24 @@
 
 ![我的权限](frontend/public/help/profile.png)
 
+### 3.18 智能助手（智能问答 / 智能问数）
+
+基于大模型（cosmo-mind）的智能助手，支持自然语言业务问答与自然语言查询系统数据。助手会按需自动生成只读 SQL 并给出结论，所有查询均为只读，不会修改系统数据。
+
+操作要点：
+- **智能问答**：像聊天一样提问业务问题，助手会自动查询系统数据后用自然语言回答；回答下方可展开查看本次执行的 SQL。
+- **智能问数**：输入统计需求（如「近 6 个月每月采购金额」），自动转换为 SQL 并返回汇总说明与结果表。
+- 结果表为两列数值时自动生成柱状图；支持「复制 SQL」与「导出 CSV」。
+- 入口：左侧菜单「智能助手」，或任意页面右下角悬浮按钮。
+- 若提示未配置大模型，请在 `backend/.env` 中设置 `LLM_API_KEY`。
+
+![智能助手](frontend/public/help/ai-assistant.png)
+
 ---
 
 ## 四、各角色专属操作指引
+
+> 说明：智能助手（智能问答 / 智能问数）对全部角色开放，权限码为 `ai:use`。
 
 ### 4.1 系统管理员（admin）
 
@@ -355,6 +370,7 @@
 | 用户与角色 | `frontend/public/help/users.png` | 用户维护与角色矩阵 |
 | 操作日志 | `frontend/public/help/audit-logs.png` | 写操作审计记录 |
 | 我的权限 | `frontend/public/help/profile.png` | 当前账号权限清单 |
+| 智能助手 | `frontend/public/help/ai-assistant.png` | 智能问答 / 智能问数 |
 
 ---
 

@@ -38,7 +38,7 @@ if [ ! -d "$ROOT/frontend/node_modules" ]; then
 fi
 
 # 限制 Node 运行时内存，防止 OOM（容器内存有限且无 swap）
-export NODE_OPTIONS="--max-old-space-size=1024"
+export NODE_OPTIONS="--max-old-space-size=1400"
 
 # 4. 清理前端构建缓存并生产构建
 rm -rf "$ROOT/frontend/dist"

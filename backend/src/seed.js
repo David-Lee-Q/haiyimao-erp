@@ -32,8 +32,102 @@ function ensureUsers() {
   }
 }
 
+function ensureShipmentNodes() {
+  const { SHIPMENT_STATUS } = require('./constants');
+  const shipments = db.prepare('SELECT * FROM t_shipment_batch WHERE is_deleted = 0').all();
+  const hasNode = db.prepare('SELECT COUNT(*) AS c FROM t_shipment_node WHERE shipment_id = ?');
+  const ins = db.prepare('INSERT INTO t_shipment_node (shipment_id, status, node_time, remark) VALUES (?,?,?,?)');
+  for (const s of shipments) {
+    if (hasNode.get(s.id).c > 0) continue;
+    const idx = SHIPMENT_STATUS.indexOf(s.status);
+    const base = s.created_at || '2026-10-01';
+    for (let i = 0; i <= idx; i += 1) {
+      const t = new Date(new Date(base.replace(' ', 'T') + 'Z').getTime() + i * 2 * 86400000)
+        .toISOString()
+        .slice(0, 19)
+        .replace('T', ' ');
+      ins.run(s.id, SHIPMENT_STATUS[i], t, null);
+    }
+  }
+}
+
+function ensureDemoShipments() {
+  const { SHIPMENT_STATUS, DOC_TYPES } = require('./constants');
+  const exists = db.prepare("SELECT id FROM t_purchase_order WHERE po_code = ?");
+  const insPo = db.prepare(
+    `INSERT INTO t_purchase_order
+     (po_code, supplier_id, incoterms, currency, exchange_rate, total_amount, total_amount_cny, status, contract_file, remark, created_by, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+  );
+  const insItem = db.prepare(
+    `INSERT INTO t_purchase_order_item
+     (po_id, sku_code, product_name, origin_country, box_count, gross_weight_kg, net_weight_kg,
+      weight_tolerance_pct, unit_price_per_box, unit_price_per_kg, temperature_requirement, sub_total)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+  );
+  const insShip = db.prepare(
+    `INSERT INTO t_shipment_batch
+     (shipment_code, po_id, status, transport_mode, vessel, container_no, seal_no, bl_no, departure_port, arrival_port, etd, eta, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
+  );
+  const insDoc = db.prepare(
+    `INSERT INTO t_shipment_document (shipment_id, doc_type, doc_name, is_required, status) VALUES (?,?,?,?,?)`
+  );
+  const insNode = db.prepare('INSERT INTO t_shipment_node (shipment_id, status, node_time, remark) VALUES (?,?,?,?)');
+  const creatorId = db.prepare("SELECT id FROM t_user WHERE username='buyer'").get()?.id || 1;
+
+  const DEMO = [
+    { n: 1, supplier: 1, dep: 'Port of Valparaiso', arr: 'Shanghai Port', status: 'WAREHOUSED', vessel: 'MSC ANDES', container: 'MSCU1000001', sku: 'FRUIT-CHL-CHER-01', name: '智利车厘子 JJ级 5kg板装', country: 'Chile', daysAgo: 40 },
+    { n: 2, supplier: 2, dep: 'Port of Melbourne', arr: 'Qingdao Port', status: 'RELEASED', vessel: 'OOCL BRISBANE', container: 'OOLU2000002', sku: 'SEAF-AUS-SHR-02', name: '澳洲岩龙虾 1kg/只 活鲜', country: 'Australia', daysAgo: 34 },
+    { n: 3, supplier: 3, dep: 'Oslo Port', arr: 'Tianjin Port', status: 'CUSTOMS_CLEARING', vessel: 'MAERSK OSLO', container: 'MRKU3000003', sku: 'SEAF-NOR-SAL-04', name: '挪威三文鱼 4-5kg 冰鲜', country: 'Norway', daysAgo: 30 },
+    { n: 4, supplier: 4, dep: 'Port of Tauranga', arr: 'Guangzhou Nansha Port', status: 'PORT_ARRIVED', vessel: 'ANL KIWI', container: 'ANLU4000004', sku: 'FRUIT-NZL-KIW-05', name: '新西兰金奇异果 3.3kg', country: 'New Zealand', daysAgo: 27 },
+    { n: 5, supplier: 1, dep: 'Port of Callao', arr: 'Ningbo-Zhoushan Port', status: 'IN_TRANSIT', vessel: 'COSCO PERU', container: 'CSNU5000005', sku: 'FRUIT-PER-GRP-07', name: '秘鲁红提 8.2kg', country: 'Peru', daysAgo: 12 },
+    { n: 6, supplier: 2, dep: 'Port of Guayaquil', arr: 'Shanghai Port', status: 'IN_TRANSIT', vessel: 'HAPAG ECUADOR', container: 'HLCU6000006', sku: 'SEAF-ECU-SHR-08', name: '厄瓜多尔白虾 2kg/箱', country: 'Ecuador', daysAgo: 8 },
+    { n: 7, supplier: 3, dep: 'Port of Vancouver', arr: 'Shanghai Port', status: 'PORT_DEPARTURE', vessel: 'ONE CANADA', container: 'ONEU7000007', sku: 'SEAF-CAN-CRB-09', name: '加拿大雪蟹 1kg/只', country: 'Canada', daysAgo: 2 },
+    { n: 8, supplier: 4, dep: 'Port of Buenos Aires', arr: 'Tianjin Port', status: 'PORT_DEPARTURE', vessel: 'CMA ARGENTINA', container: 'CMAU8000008', sku: 'SEAF-ARG-RED-10', name: '阿根廷红虾 L1 2kg/箱', country: 'Argentina', daysAgo: 0 },
+  ];
+
+  for (const dm of DEMO) {
+    const poCode = `PO-DEMO-${String(dm.n).padStart(2, '0')}`;
+    if (exists.get(poCode)) continue;
+
+    const today = new Date();
+    const etdDate = new Date(today.getTime() - dm.daysAgo * 86400000);
+    const etd = etdDate.toISOString().slice(0, 10);
+    const eta = addDays(etd, 25);
+    const statusIdx = SHIPMENT_STATUS.indexOf(dm.status);
+    const createdAt = etd + ' 09:00:00';
+
+    db.transaction(() => {
+      const poInfo = insPo.run(
+        poCode, dm.supplier, 'CIF', 'USD', 7.18, 100000, 718000, 'IN_TRANSIT',
+        `${poCode}-合同.pdf`, '演示货运数据', creatorId, etd
+      );
+      const poId = poInfo.lastInsertRowid;
+      insItem.run(poId, dm.sku, dm.name, dm.country, 1000, 5400, 5000, 3, 50, null, 'CHILLED', 50000);
+
+      const shipCode = `SHP-DEMO-${String(dm.n).padStart(2, '0')}`;
+      const shipInfo = insShip.run(
+        shipCode, poId, dm.status, 'SEA', dm.vessel, dm.container, `SL${dm.n}0000`, `BL-DEMO-${dm.n}`,
+        dm.dep, dm.arr, etd, eta, createdAt
+      );
+      const shipId = shipInfo.lastInsertRowid;
+
+      for (const doc of DOC_TYPES) {
+        insDoc.run(shipId, doc.doc_type, doc.doc_name, doc.is_required, 'UPLOADED');
+      }
+      for (let i = 0; i <= statusIdx; i += 1) {
+        const t = new Date(new Date(etd + 'T00:00:00Z').getTime() + i * (dm.daysAgo / Math.max(statusIdx, 1) || 2) * 86400000);
+        insNode.run(shipId, SHIPMENT_STATUS[i], t.toISOString().slice(0, 19).replace('T', ' '), null);
+      }
+    })();
+  }
+}
+
 function run() {
   ensureUsers();
+  ensureShipmentNodes();
+  ensureDemoShipments();
 
   const count = db.prepare('SELECT COUNT(*) AS c FROM t_purchase_order').get().c;
   if (count > 0) {

@@ -11,6 +11,19 @@ const proxy = {
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    target: 'esnext',
+    chunkSizeWarningLimit: 3000,
+    rollupOptions: {
+      maxParallelFileOps: 1,
+      output: {
+        manualChunks: {
+          three: ['three'],
+          globe: ['globe.gl', 'topojson-client'],
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,

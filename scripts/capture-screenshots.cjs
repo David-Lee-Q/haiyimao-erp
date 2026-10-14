@@ -13,7 +13,7 @@ const pages = [
   { file: 'purchase-list.png', route: '/purchase/orders', wait: 1400 },
   { file: 'purchase-create.png', route: '/purchase/order/create', wait: 1600 },
   { file: 'purchase-detail.png', route: '/purchase/order/1', wait: 1400 },
-  { file: 'shipment-list.png', route: '/shipment/batches', wait: 1200 },
+  { file: 'shipment-list.png', route: '/shipment/batches', wait: 6000, full: true },
   { file: 'shipment-detail.png', route: '/shipment/batch/1', wait: 1400 },
   { file: 'wms-inbound.png', route: '/wms/inbound', wait: 1400 },
   { file: 'wms-inventory.png', route: '/wms/inventory', wait: 1400 },
@@ -42,7 +42,15 @@ async function main() {
   const browser = await chromium.launch({
     executablePath: '/usr/bin/chromium',
     headless: true,
-    args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--hide-scrollbars'],
+    args: [
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--use-gl=angle',
+      '--use-angle=swiftshader',
+      '--enable-unsafe-swiftshader',
+      '--ignore-gpu-blocklist',
+      '--hide-scrollbars',
+    ],
   });
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
   await context.addInitScript(
@@ -58,7 +66,7 @@ async function main() {
     process.stdout.write(`capture ${p.file} ... `);
     await page.goto(BASE + p.route, { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {});
     await page.waitForTimeout(p.wait);
-    await page.screenshot({ path: path.join(OUT, p.file) });
+    await page.screenshot({ path: path.join(OUT, p.file), fullPage: !!p.full });
     console.log('ok');
   }
 

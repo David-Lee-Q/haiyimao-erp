@@ -48,6 +48,7 @@ app.use('/api/v1/dashboard', require('./routes/dashboard'));
 app.use('/api/v1/users', require('./routes/users'));
 app.use('/api/v1/files', require('./routes/files'));
 app.use('/api/v1/audit-logs', require('./routes/audit'));
+app.use('/api/v1/ai', require('./routes/ai'));
 
 app.use((req, res) => res.status(404).json({ code: 404, message: `接口不存在: ${req.method} ${req.path}` }));
 

@@ -23,14 +23,19 @@
         <el-table-column label="当前节点" width="130">
           <template #default="{ row }"><StatusTag :status="row.status" :map="SHIPMENT_STATUS_LABEL" /></template>
         </el-table-column>
-        <el-table-column label="操作" width="170" fixed="right">
+        <el-table-column label="操作" width="230" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="$router.push(`/shipment/batch/${row.id}`)">控制台</el-button>
+            <el-button link type="primary" @click="openTrack(row)">定位</el-button>
             <el-button v-if="can('shipment:delete')" link type="danger" @click="remove(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+
+    <el-dialog v-model="trackVisible" :title="`货运海图 · ${trackCode}`" width="960px" top="6vh" destroy-on-close>
+      <ShipmentTrack v-if="trackVisible" :shipment-id="trackShipmentId" />
+    </el-dialog>
   </div>
 </template>
 
@@ -40,6 +45,7 @@ import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import api, { toastError } from '../../api';
 import StatusTag from '../../components/StatusTag.vue';
+import ShipmentTrack from '../../components/ShipmentTrack.vue';
 import { SHIPMENT_STATUS_LABEL } from '../../statusMap';
 import { useAuthStore } from '../../store/auth';
 
@@ -47,6 +53,15 @@ const auth = useAuthStore();
 const can = (c) => auth.hasPerm(c);
 const rows = ref([]);
 const loading = ref(false);
+const trackVisible = ref(false);
+const trackShipmentId = ref(null);
+const trackCode = ref('');
+
+function openTrack(row) {
+  trackShipmentId.value = row.id;
+  trackCode.value = row.shipment_code;
+  trackVisible.value = true;
+}
 
 async function load() {
   loading.value = true;

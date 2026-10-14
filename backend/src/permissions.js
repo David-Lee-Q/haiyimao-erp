@@ -11,6 +11,7 @@ const ROLE_LABEL = {
 
 const ALL_PERMISSIONS = [
   'dashboard:view',
+  'ai:use',
 
   'supplier:view',
   'supplier:manage',
@@ -58,6 +59,7 @@ const ALL_PERMISSIONS = [
 
 const PERMISSION_LABEL = {
   'dashboard:view': '查看经营概览',
+  'ai:use': '使用智能助手',
   'supplier:view': '查看供应商',
   'supplier:manage': '维护供应商',
   'purchase:view': '查看采购订单',
@@ -96,6 +98,7 @@ const ROLE_PERMISSIONS = {
   admin: ['*'],
   manager: [
     'dashboard:view',
+    'ai:use',
     'supplier:view', 'supplier:manage',
     'purchase:view', 'purchase:create', 'purchase:edit', 'purchase:delete', 'purchase:submit', 'purchase:approve', 'purchase:export',
     'shipment:view', 'shipment:manage', 'shipment:delete',
@@ -110,6 +113,7 @@ const ROLE_PERMISSIONS = {
   ],
   purchase: [
     'dashboard:view',
+    'ai:use',
     'supplier:view',
     'purchase:view', 'purchase:create', 'purchase:edit', 'purchase:delete', 'purchase:submit', 'purchase:export',
     'shipment:view', 'shipment:manage',
@@ -121,6 +125,7 @@ const ROLE_PERMISSIONS = {
   ],
   warehouse: [
     'dashboard:view',
+    'ai:use',
     'supplier:view',
     'purchase:view',
     'shipment:view', 'shipment:manage',
@@ -131,6 +136,7 @@ const ROLE_PERMISSIONS = {
   ],
   finance: [
     'dashboard:view',
+    'ai:use',
     'supplier:view',
     'purchase:view', 'purchase:export',
     'shipment:view',
@@ -143,6 +149,7 @@ const ROLE_PERMISSIONS = {
   ],
   quality: [
     'dashboard:view',
+    'ai:use',
     'purchase:view',
     'shipment:view',
     'wms:view',

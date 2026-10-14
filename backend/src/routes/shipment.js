@@ -1,10 +1,14 @@
 const express = require('express');
 const db = require('../db');
 const { SHIPMENT_STATUS_LABEL, SHIPMENT_STATUS } = require('../constants');
-const { getShipmentDetail, advanceShipment } = require('../services/shipmentService');
+const { getShipmentDetail, advanceShipment, buildTrack, buildGlobalTracks } = require('../services/shipmentService');
 const { requirePermission } = require('../auth');
 
 const router = express.Router();
+
+router.get('/global', requirePermission('shipment:view'), (req, res) => {
+  res.json({ code: 200, data: buildGlobalTracks() });
+});
 
 router.get('/batches', requirePermission('shipment:view'), (req, res) => {
   const rows = db
@@ -39,6 +43,12 @@ router.get('/batches/:id', requirePermission('shipment:view'), (req, res) => {
       attachments: files,
     },
   });
+});
+
+router.get('/batches/:id/track', requirePermission('shipment:view'), (req, res) => {
+  const track = buildTrack(req.params.id);
+  if (!track) return res.status(404).json({ code: 404, message: '货运批次不存在' });
+  res.json({ code: 200, data: track });
 });
 
 router.patch('/batches/:id', requirePermission('shipment:manage'), (req, res) => {

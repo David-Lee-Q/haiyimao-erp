@@ -11,6 +11,7 @@ const routes = [
     children: [
       { path: 'dashboard', name: 'dashboard', component: () => import('../views/Dashboard.vue'), meta: { title: '经营概览', permission: 'dashboard:view' } },
       { path: 'help', name: 'help', component: () => import('../views/Help.vue'), meta: { title: '帮助中心' } },
+      { path: 'ai', name: 'ai', component: () => import('../views/AiAssistant.vue'), meta: { title: '智能助手', permission: 'ai:use' } },
 
       { path: 'suppliers', name: 'suppliers', component: () => import('../views/SupplierList.vue'), meta: { title: '供应商管理', permission: 'supplier:view' } },
 
@@ -20,6 +21,7 @@ const routes = [
       { path: 'purchase/order/:id', name: 'purchase-order-detail', component: () => import('../views/purchase/OrderDetail.vue'), meta: { title: '采购订单详情', permission: 'purchase:view' } },
 
       { path: 'shipment/batches', name: 'shipment-batches', component: () => import('../views/shipment/BatchList.vue'), meta: { title: '货运批次', permission: 'shipment:view' } },
+      { path: 'shipment/global', name: 'shipment-global', component: () => import('../views/shipment/GlobalOverview.vue'), meta: { title: '全球货运态势', permission: 'shipment:view' } },
       { path: 'shipment/batch/:id', name: 'shipment-batch-detail', component: () => import('../views/shipment/BatchDetail.vue'), meta: { title: '批次与单证控制台', permission: 'shipment:view' } },
 
       { path: 'wms/inbound', name: 'wms-inbound', component: () => import('../views/wms/Inbound.vue'), meta: { title: '入库理算', permission: 'wms:inbound' } },

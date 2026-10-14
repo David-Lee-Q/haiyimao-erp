@@ -1,12 +1,11 @@
 <template>
   <div class="login-page">
     <div class="bg-layer" :style="bgStyle"></div>
-    <div class="bg-overlay"></div>
 
     <div class="login-panel">
       <section class="intro">
         <div class="brand">
-          <div class="brand-logo"><el-icon :size="28"><Sunny /></el-icon></div>
+          <img class="brand-logo" :src="logoUrl" alt="海易贸" />
           <div class="brand-text">
             <h1>海易贸 · 生鲜外贸ERP</h1>
             <p>Fresh Food Foreign Trade ERP</p>
@@ -70,9 +69,7 @@ import { ElMessage } from 'element-plus';
 import { User, Lock, Sunny, ShoppingCart, Ship, Box, Money, Odometer } from '@element-plus/icons-vue';
 import { useAuthStore } from '../store/auth';
 import { toastError } from '../api';
-import seaportScene from '../assets/scenes/seaport.svg';
-import coldchainScene from '../assets/scenes/coldchain.svg';
-import orchardScene from '../assets/scenes/orchard.svg';
+import logoUrl from '../assets/logo.svg';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -80,10 +77,11 @@ const loading = ref(false);
 const year = new Date().getFullYear();
 const form = reactive({ username: 'buyer', password: 'buyer123' });
 
-// 随机场景背景
-const sceneList = [seaportScene, coldchainScene, orchardScene];
+// 随机海运实景大图背景（预设 5 张高清图，位于 public/login-bg/）
+const base = import.meta.env.BASE_URL || '/';
+const sceneList = Array.from({ length: 5 }, (_, i) => `${base}login-bg/bg${i + 1}.jpg`);
 const scene = sceneList[Math.floor(Math.random() * sceneList.length)];
-const bgStyle = computed(() => (scene ? { backgroundImage: `url("${scene}")` } : {}));
+const bgStyle = computed(() => ({ backgroundImage: `url("${scene}")` }));
 
 const features = [
   { icon: ShoppingCart, title: '采购订单管理', desc: '多币种锁汇、双单位联动、审批状态机' },
@@ -129,45 +127,41 @@ async function onSubmit() {
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-right: clamp(24px, 7vw, 160px);
   background: #0a1a2f;
+  /* 登录表单容器的毛玻璃背景模糊度（仅作用于容器，不影响背景大图） */
+  --login-panel-blur: 14px;
 }
 
-/* 随机场景背景（虚化） */
+/* 随机海运实景大图（清晰原图，不做虚化） */
 .bg-layer {
   position: absolute;
-  inset: -6%;
+  inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(14px) saturate(1.35) brightness(1.35);
-  transform: scale(1.06);
   transition: background-image 0.6s ease;
 }
-.bg-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, rgba(6, 20, 40, 0.34) 0%, rgba(8, 26, 48, 0.16) 55%, rgba(9, 26, 48, 0.1) 100%);
-}
 
-/* 悬浮玻璃面板：左右同处一个背景之上 */
+/* 悬浮玻璃面板：左右同处一个背景之上（宽度较原版压缩 30%） */
 .login-panel {
   position: relative;
   z-index: 2;
   display: flex;
-  width: min(1060px, 92vw);
+  width: min(742px, 92vw);
   border-radius: 24px;
   overflow: hidden;
   background: rgba(9, 24, 44, 0.56);
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: 0 30px 80px rgba(4, 18, 36, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--login-panel-blur));
+  -webkit-backdrop-filter: blur(var(--login-panel-blur));
 }
 
 .intro {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 46px clamp(28px, 4vw, 56px);
+  padding: 36px clamp(22px, 3vw, 40px);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -182,35 +176,32 @@ async function onSubmit() {
   width: 50px;
   height: 50px;
   border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  display: block;
+  box-shadow: 0 4px 14px rgba(9, 32, 60, 0.35);
 }
 .brand-text h1 {
   margin: 0;
-  font-size: 21px;
+  font-size: 18px;
   letter-spacing: 0.5px;
 }
 .brand-text p {
-  margin: 4px 0 0;
-  font-size: 11px;
-  letter-spacing: 1.6px;
+  margin: 3px 0 0;
+  font-size: 10px;
+  letter-spacing: 1.4px;
   color: rgba(255, 255, 255, 0.55);
   text-transform: uppercase;
 }
 .slogan {
-  font-size: 27px;
+  font-size: 21px;
   line-height: 1.45;
   font-weight: 700;
-  margin: 0 0 16px;
+  margin: 0 0 12px;
 }
 .desc {
-  font-size: 13.5px;
-  line-height: 1.85;
+  font-size: 12px;
+  line-height: 1.75;
   color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 28px;
+  margin: 0 0 20px;
   max-width: 460px;
 }
 .features {
@@ -218,18 +209,18 @@ async function onSubmit() {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 14px;
+  gap: 11px;
 }
 .features li {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-start;
 }
 .feat-icon {
   flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,13 +228,13 @@ async function onSubmit() {
   color: #8fd8ff;
 }
 .feat-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 .feat-desc {
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.58);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 .aside-foot {
   margin-top: auto;
@@ -253,15 +244,15 @@ async function onSubmit() {
 }
 
 .form-col {
-  flex: 0 0 400px;
+  flex: 0 0 330px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 34px 30px;
+  padding: 28px 24px;
 }
 .login-card {
   width: 100%;
-  max-width: 340px;
+  max-width: 300px;
 }
 .card-head {
   margin-bottom: 22px;
@@ -297,6 +288,10 @@ async function onSubmit() {
 }
 
 @media (max-width: 900px) {
+  .login-page {
+    justify-content: center;
+    padding-right: 0;
+  }
   .login-panel {
     width: 92vw;
   }

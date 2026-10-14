@@ -71,6 +71,24 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 截图前必须安装中文字体 `fonts-noto-cjk`，否则页面中文会渲染成方框（tofu）。
   - 截图需先启动服务（5173 由 `start.sh` 提供），脚本通过 API 登录后写入 `localStorage` 的 `erp_token`/`erp_user` 完成鉴权。
 
+[货运海图 3D 实现方案]
+- Date: 2026-10-14
+- Context: Agent 在实现「真实 3D 地图」货运轨迹时选型发现
+- Category: 构建方法
+- Instructions:
+  - 采用开源方案：`globe.gl`（MIT，基于 three.js）渲染 3D 地球，国界数据用 `world-atlas`（Natural Earth 派生，npm 包 `countries-110m.json`）+ `topojson-client` 转换，无需外部瓦片服务，可离线渲染国界/国家/城市。
+  - 组件 `frontend/src/components/ShipmentGlobe.vue`；`ShipmentTrack.vue` 通过 `defineAsyncComponent` 懒加载它（该分包约 2MB，仅在打开海图弹窗时加载）。
+  - 港口经纬度字典在 `backend/src/constants/ports.js`；轨迹数据由 `GET /api/v1/shipment/batches/:id/track` 提供，节点记录表 `t_shipment_node`。
+  - 航线若接近对跖（如智利→中国约 170°），单个视角无法同时看到两端，默认相机对准「当前位置」，并开启慢速自转。
+
+[构建内存注意事项]
+- Date: 2026-10-14
+- Context: Agent 在引入 three.js 后构建时发现
+- Category: 环境配置
+- Instructions:
+  - 前端为重型构建（含 three/globe.gl，单包约 2MB），在内存受限容器中并行运行构建与无头浏览器可能触发 OOM 导致构建产物不完整（dist/index.html 缺失）。
+  - 建议单独执行 `cd frontend && npm run build` 并确认 `dist/index.html` 存在，再运行依赖它的验证脚本。
+
 [附件存储方式]
 - Date: 2026-10-12
 - Context: Agent 在补齐文件上传下载功能时发现

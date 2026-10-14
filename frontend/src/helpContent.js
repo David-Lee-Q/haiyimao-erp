@@ -14,6 +14,19 @@ const M = {
       '点击右上角「刷新」重新拉取最新统计。',
     ],
   },
+  ai: {
+    key: 'ai-assistant',
+    title: '智能助手（智能问答 / 智能问数）',
+    img: 'ai-assistant.png',
+    desc: '基于大模型（cosmo-mind）的智能助手，支持自然语言业务问答与自然语言查询系统数据。助手会按需自动生成只读 SQL 并给出结论，所有查询均为只读，不会修改系统数据。',
+    points: [
+      '智能问答：像聊天一样提问业务问题，助手会自动查询系统数据后用自然语言回答；可展开查看本次执行的 SQL。',
+      '智能问数：输入统计需求（如「近6个月每月采购金额」），自动转换为 SQL 并返回汇总说明与结果表。',
+      '结果表为两列数值时会自动生成柱状图；支持「复制 SQL」与「导出 CSV」。',
+      '入口：左侧菜单「智能助手」，或任意页面右下角的悬浮按钮。',
+      '若提示未配置大模型，请在 backend/.env 中设置 LLM_API_KEY。',
+    ],
+  },
   suppliers: {
     key: 'suppliers',
     title: '供应商管理',
@@ -206,32 +219,32 @@ const ROLES = {
   admin: {
     label: '系统管理员',
     summary: '拥有全部功能权限，负责系统基础数据、用户与角色、以及全流程的监督与运维。',
-    modules: [M.dashboard, M.users, M.audit, M.suppliers, M.purchaseList, M.purchaseDetail, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.approvals, M.profile],
+    modules: [M.dashboard, M.ai, M.users, M.audit, M.suppliers, M.purchaseList, M.purchaseDetail, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.approvals, M.profile],
   },
   manager: {
     label: '采购经理',
     summary: '负责采购订单的审批与全流程管控、供应商维护、货运与库存监督，并可查看经营与财务数据。',
-    modules: [M.dashboard, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.approvals, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.audit, M.profile],
+    modules: [M.dashboard, M.ai, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.approvals, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.financeLandcost, M.financeCustoms, M.salesOrders, M.monitor, M.audit, M.profile],
   },
   purchase: {
     label: '采购员',
     summary: '负责采购订单的创建、编辑与提交，跟进国际货运，并可创建销售出库单。仅能查看本人创建的采购订单。',
-    modules: [M.dashboard, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.shipmentList, M.shipmentDetail, M.salesOrders, M.profile],
+    modules: [M.dashboard, M.ai, M.suppliers, M.purchaseList, M.purchaseCreate, M.purchaseDetail, M.shipmentList, M.shipmentDetail, M.salesOrders, M.profile],
   },
   warehouse: {
     label: '仓储主管',
     summary: '负责到货入库理算、库存批次管理、盘点调整与调拨，以及货运节点与单证维护。',
-    modules: [M.dashboard, M.purchaseList, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.salesOrders, M.monitor, M.profile],
+    modules: [M.dashboard, M.ai, M.purchaseList, M.shipmentList, M.shipmentDetail, M.wmsInbound, M.wmsInventory, M.salesOrders, M.monitor, M.profile],
   },
   finance: {
     label: '财务专员',
     summary: '负责落地成本分摊与关税/增值税倒算，生成财务应付凭证，并可导出采购订单、查看操作日志。',
-    modules: [M.dashboard, M.purchaseList, M.purchaseDetail, M.financeLandcost, M.financeCustoms, M.shipmentList, M.wmsInventory, M.audit, M.profile],
+    modules: [M.dashboard, M.ai, M.purchaseList, M.purchaseDetail, M.financeLandcost, M.financeCustoms, M.shipmentList, M.wmsInventory, M.audit, M.profile],
   },
   quality: {
     label: '生鲜品质主管',
     summary: '负责冷链温控监控与温度告警处理，参与磅差理赔、临期批次强制出库与采购审批。',
-    modules: [M.dashboard, M.monitor, M.approvals, M.purchaseList, M.shipmentList, M.wmsInventory, M.profile],
+    modules: [M.dashboard, M.ai, M.monitor, M.approvals, M.purchaseList, M.shipmentList, M.wmsInventory, M.profile],
   },
 };
 

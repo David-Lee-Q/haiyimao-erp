@@ -21,7 +21,7 @@
     </div>
 
     <el-row :gutter="16" v-if="result">
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <h3>计算结果</h3>
           <el-descriptions :column="1" border>
@@ -36,7 +36,7 @@
           </el-descriptions>
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <h3>税费结构</h3>
           <EChart :option="pieOption" :height="320" />

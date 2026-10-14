@@ -42,9 +42,9 @@
     <div v-if="result" class="card-block">
       <h3>分摊结果</h3>
       <el-row :gutter="16" style="margin-bottom: 12px">
-        <el-col :span="8"><div class="stat-card"><div class="label">货物基础成本</div><div class="value">¥ {{ fmt(result.base_goods_cost_cny) }}</div></div></el-col>
-        <el-col :span="8"><div class="stat-card"><div class="label">附加费用合计</div><div class="value">¥ {{ fmt(additionalTotal) }}</div></div></el-col>
-        <el-col :span="8"><div class="stat-card"><div class="label">完税后落地总成本</div><div class="value" style="color:#16508f">¥ {{ fmt(result.total_landed_cost_cny) }}</div></div></el-col>
+        <el-col :xs="24" :sm="8"><div class="stat-card"><div class="label">货物基础成本</div><div class="value">¥ {{ fmt(result.base_goods_cost_cny) }}</div></div></el-col>
+        <el-col :xs="24" :sm="8"><div class="stat-card"><div class="label">附加费用合计</div><div class="value">¥ {{ fmt(additionalTotal) }}</div></div></el-col>
+        <el-col :xs="24" :sm="8"><div class="stat-card"><div class="label">完税后落地总成本</div><div class="value" style="color:#16508f">¥ {{ fmt(result.total_landed_cost_cny) }}</div></div></el-col>
       </el-row>
       <el-table :data="result.items_breakdown" size="small" border>
         <el-table-column prop="sku_code" label="SKU" width="170" />

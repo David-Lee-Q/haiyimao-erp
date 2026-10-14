@@ -65,7 +65,7 @@
     </div>
 
     <el-row :gutter="16">
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <div style="display:flex;justify-content:space-between">
             <h3>国际货运批次</h3>
@@ -80,7 +80,7 @@
           </el-descriptions>
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <div style="display:flex;justify-content:space-between">
             <h3>落地成本分摊</h3>

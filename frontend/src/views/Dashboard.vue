@@ -29,13 +29,13 @@
     </div>
 
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <h3>采购订单状态分布</h3>
           <EChart :option="poStatusOption" :height="280" />
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <h3>库存温区结构（箱）</h3>
           <EChart :option="zoneOption" :height="280" />
@@ -44,13 +44,13 @@
     </el-row>
 
     <el-row :gutter="16">
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <h3>近 6 个月采购金额趋势（CNY）</h3>
           <EChart :option="trendOption" :height="280" />
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <div class="card-block">
           <h3>货运批次节点分布</h3>
           <EChart :option="shipmentOption" :height="280" />
@@ -109,7 +109,7 @@ const poStatusOption = computed(() => {
   return {
     tooltip: { trigger: 'axis' },
     grid: { left: 90, right: 20, top: 20, bottom: 20 },
-    xAxis: { type: 'value' },
+    xAxis: { type: 'value', axisLabel: { hideOverlap: true } },
     yAxis: { type: 'category', data: rows.map((r) => r.label) },
     series: [{ type: 'bar', data: rows.map((r) => r.count), itemStyle: { color: '#16508f' }, barWidth: 16 }],
   };
@@ -147,7 +147,7 @@ const shipmentOption = computed(() => {
   return {
     tooltip: { trigger: 'axis' },
     grid: { left: 90, right: 20, top: 20, bottom: 20 },
-    xAxis: { type: 'value' },
+    xAxis: { type: 'value', axisLabel: { hideOverlap: true } },
     yAxis: { type: 'category', data: rows.map((r) => r.label) },
     series: [{ type: 'bar', data: rows.map((r) => r.count), itemStyle: { color: '#67c23a' }, barWidth: 16 }],
   };

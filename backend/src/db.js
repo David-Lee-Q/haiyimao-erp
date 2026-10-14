@@ -257,6 +257,15 @@ function initSchema() {
 
   CREATE INDEX IF NOT EXISTS idx_file_biz ON t_file(biz_type, biz_id);
   CREATE INDEX IF NOT EXISTS idx_invlog_batch ON t_inventory_log(batch_id);
+
+  CREATE TABLE IF NOT EXISTS t_shipment_node (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shipment_id INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    node_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    remark TEXT
+  );
+  CREATE INDEX IF NOT EXISTS idx_shipnode_shipment ON t_shipment_node(shipment_id);
   `);
 }
 

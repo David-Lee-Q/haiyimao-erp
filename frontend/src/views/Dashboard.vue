@@ -73,17 +73,58 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <!-- 全球货运态势悬浮窗 -->
+    <div v-if="mapMode === 'expanded'" class="float-mask" @click="minimizeMap"></div>
+    <div v-if="mapMode === 'expanded'" class="float-panel">
+      <div class="float-head">
+        <span class="float-title">全球货运态势</span>
+        <el-icon class="float-btn" title="最小化" @click="minimizeMap"><Minus /></el-icon>
+      </div>
+      <div class="float-body" v-loading="mapLoading">
+        <GlobalShipmentMap :tracks="tracks" />
+      </div>
+    </div>
+    <div v-if="mapMode === 'minimized'" class="float-chip" title="展开全球货运态势" @click="expandMap">
+      <el-icon><TrendCharts /></el-icon>
+      <span>全球货运态势</span>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { Refresh } from '@element-plus/icons-vue';
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
+import { Refresh, Minus, TrendCharts } from '@element-plus/icons-vue';
 import api, { toastError } from '../api';
 import EChart from '../components/EChart.vue';
 
+const GlobalShipmentMap = defineAsyncComponent(() => import('../components/GlobalShipmentMap.vue'));
+
 const loading = ref(false);
 const summary = ref({});
+
+const mapMode = ref('expanded');
+const tracks = ref([]);
+const mapLoading = ref(false);
+
+function minimizeMap() {
+  mapMode.value = 'minimized';
+}
+function expandMap() {
+  mapMode.value = 'expanded';
+  if (!tracks.value.length) loadMap();
+}
+async function loadMap() {
+  mapLoading.value = true;
+  try {
+    const res = await api.get('/shipment/global');
+    tracks.value = res.data || [];
+  } catch (e) {
+    toastError(e);
+  } finally {
+    mapLoading.value = false;
+  }
+}
 
 function fmt(n) {
   return Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -154,4 +195,65 @@ const shipmentOption = computed(() => {
 });
 
 onMounted(load);
+onMounted(loadMap);
 </script>
+
+<style scoped>
+.float-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  background: rgba(15, 26, 45, 0.35);
+}
+.float-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2600;
+  width: min(760px, 92vw);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 48px rgba(8, 22, 45, 0.35);
+}
+.float-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(90deg, #0e3a63, #16508f);
+  color: #fff;
+}
+.float-title { font-weight: 600; font-size: 14px; }
+.float-btn { cursor: pointer; padding: 4px; border-radius: 6px; }
+.float-btn:hover { background: rgba(255, 255, 255, 0.18); }
+.float-body { max-height: 80vh; overflow: hidden; }
+.float-body :deep(.map-legend) { padding: 8px 12px 6px; margin: 0; }
+.float-body :deep(.global-globe) { height: 430px; border-radius: 0 0 14px 14px; }
+.float-chip {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 24px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #0e3a63, #16508f);
+  box-shadow: 0 10px 26px rgba(8, 22, 45, 0.35);
+  transition: transform 0.15s ease;
+}
+.float-chip:hover { transform: translateY(-2px); }
+@media (max-width: 768px) {
+  .float-panel { right: 12px; bottom: 12px; width: calc(100vw - 24px); }
+  .float-body :deep(.global-globe) { height: 340px; }
+  .float-chip { right: 12px; bottom: 12px; }
+}
+</style>

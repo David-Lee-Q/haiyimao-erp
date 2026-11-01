@@ -266,6 +266,26 @@ function initSchema() {
     remark TEXT
   );
   CREATE INDEX IF NOT EXISTS idx_shipnode_shipment ON t_shipment_node(shipment_id);
+
+  CREATE TABLE IF NOT EXISTS t_ai_conversation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_deleted INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE INDEX IF NOT EXISTS idx_aiconv_user ON t_ai_conversation(user_id);
+
+  CREATE TABLE IF NOT EXISTS t_ai_message (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT,
+    queries TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_aimsg_conv ON t_ai_message(conversation_id);
   `);
 }
 

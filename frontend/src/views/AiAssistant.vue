@@ -9,42 +9,64 @@
     <el-tabs v-model="tab" class="card-block">
       <!-- 智能问答 -->
       <el-tab-pane label="智能问答" name="chat">
-        <div class="chat-box" ref="chatBox">
-          <div v-if="!messages.length" class="chat-empty">
-            <el-icon :size="34"><MagicStick /></el-icon>
-            <p>你好，我是海易贸智能助手，可以解答系统业务问题，也能实时查询数据。</p>
-            <div class="examples">
-              <el-tag v-for="e in chatExamples" :key="e" class="ex" @click="send(e)">{{ e }}</el-tag>
+        <div class="chat-layout">
+          <aside class="conv-side">
+            <el-button class="new-btn" type="primary" plain :icon="Plus" @click="newConversation">新建对话</el-button>
+            <div class="conv-list">
+              <div
+                v-for="c in conversations"
+                :key="c.id"
+                class="conv-item"
+                :class="{ active: c.id === currentId }"
+                @click="openConversation(c.id)"
+              >
+                <el-icon class="conv-ico"><ChatDotRound /></el-icon>
+                <span class="conv-title">{{ c.title || '新对话' }}</span>
+                <span class="conv-del" title="删除" @click.stop="removeConversation(c)"><el-icon><Delete /></el-icon></span>
+              </div>
+              <div v-if="!conversations.length" class="conv-empty">暂无历史对话</div>
             </div>
-          </div>
-          <div v-for="(m, i) in messages" :key="i" class="msg" :class="m.role">
-            <div class="avatar">
-              <el-icon v-if="m.role === 'user'"><User /></el-icon>
-              <el-icon v-else><MagicStick /></el-icon>
-            </div>
-            <div class="bubble">
-              <div class="content" v-html="formatAnswer(m.content)"></div>
-              <div v-if="m.queries && m.queries.length" class="sql-block">
-                <el-collapse>
-                  <el-collapse-item :title="`本次查询了 ${m.queries.length} 条 SQL`">
-                    <div v-for="(q, qi) in m.queries" :key="qi" class="sql-item">
-                      <pre class="mono">{{ q.sql }}</pre>
-                      <div v-if="q.error" class="sql-err">执行错误：{{ q.error }}</div>
-                      <div v-else class="muted">返回 {{ q.rows.length }} 行 · {{ (q.columns || []).join('、') }}</div>
-                    </div>
-                  </el-collapse-item>
-                </el-collapse>
+          </aside>
+
+          <div class="chat-main">
+            <div class="chat-box" ref="chatBox">
+              <div v-if="!messages.length" class="chat-empty">
+                <el-icon :size="34"><MagicStick /></el-icon>
+                <p>你好，我是海易贸智能助手，可以解答系统业务问题，也能实时查询数据。</p>
+                <div class="examples">
+                  <el-tag v-for="e in chatExamples" :key="e" class="ex" @click="send(e)">{{ e }}</el-tag>
+                </div>
+              </div>
+              <div v-for="(m, i) in messages" :key="i" class="msg" :class="m.role">
+                <div class="avatar">
+                  <el-icon v-if="m.role === 'user'"><User /></el-icon>
+                  <el-icon v-else><MagicStick /></el-icon>
+                </div>
+                <div class="bubble">
+                  <div class="content" v-html="formatAnswer(m.content)"></div>
+                  <div v-if="m.queries && m.queries.length" class="sql-block">
+                    <el-collapse>
+                      <el-collapse-item :title="`本次查询了 ${m.queries.length} 条 SQL`">
+                        <div v-for="(q, qi) in m.queries" :key="qi" class="sql-item">
+                          <pre class="mono">{{ q.sql }}</pre>
+                          <div v-if="q.error" class="sql-err">执行错误：{{ q.error }}</div>
+                          <div v-else class="muted">返回 {{ (q.rows || []).length }} 行 · {{ (q.columns || []).join('、') }}</div>
+                        </div>
+                      </el-collapse-item>
+                    </el-collapse>
+                  </div>
+                </div>
+              </div>
+              <div v-if="loading" class="msg assistant">
+                <div class="avatar"><el-icon><MagicStick /></el-icon></div>
+                <div class="bubble"><el-icon class="is-loading"><Loading /></el-icon> 正在思考…</div>
               </div>
             </div>
+            <div class="chat-input">
+              <el-input v-model="input" type="textarea" :rows="2" resize="none" placeholder="输入问题，例如：哪些批次临近到期？" @keydown.enter.exact.prevent="send()" />
+              <el-button type="primary" :loading="loading" @click="send()">发送</el-button>
+            </div>
           </div>
-          <div v-if="loading" class="msg assistant">
-            <div class="avatar"><el-icon><MagicStick /></el-icon></div>
-            <div class="bubble"><el-icon class="is-loading"><Loading /></el-icon> 正在思考…</div>
-          </div>
-        </div>
-        <div class="chat-input">
-          <el-input v-model="input" type="textarea" :rows="2" resize="none" placeholder="输入问题，例如：哪些批次临近到期？" @keydown.enter.exact.prevent="send()" />
-          <el-button type="primary" :loading="loading" @click="send()">发送</el-button>
         </div>
       </el-tab-pane>
 
@@ -84,8 +106,8 @@
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { MagicStick, User, Loading } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { MagicStick, User, Loading, Plus, ChatDotRound, Delete } from '@element-plus/icons-vue';
 import api, { toastError } from '../api';
 import EChart from '../components/EChart.vue';
 import { downloadBlob } from '../utils/file';
@@ -96,6 +118,9 @@ const input = ref('');
 const messages = ref([]);
 const loading = ref(false);
 const chatBox = ref(null);
+
+const conversations = ref([]);
+const currentId = ref(null);
 
 const question = ref('');
 const querying = ref(false);
@@ -140,14 +165,58 @@ async function send(text) {
   await scrollBottom();
   try {
     const history = messages.value.map((m) => ({ role: m.role, content: m.content }));
-    const res = await api.post('/ai/chat', { messages: history });
+    const res = await api.post('/ai/chat', { messages: history, conversation_id: currentId.value });
     messages.value.push({ role: 'assistant', content: res.data.answer, queries: res.data.queries });
+    if (!currentId.value && res.data.conversation_id) currentId.value = res.data.conversation_id;
+    await loadConversations();
   } catch (e) {
     messages.value.push({ role: 'assistant', content: `抱歉，出错了：${e.message}` });
     toastError(e);
   } finally {
     loading.value = false;
     scrollBottom();
+  }
+}
+
+async function loadConversations() {
+  try {
+    const res = await api.get('/ai/conversations');
+    conversations.value = res.data || [];
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+function newConversation() {
+  currentId.value = null;
+  messages.value = [];
+  input.value = '';
+}
+
+async function openConversation(id) {
+  if (id === currentId.value) return;
+  try {
+    const res = await api.get(`/ai/conversations/${id}`);
+    currentId.value = id;
+    messages.value = (res.data.messages || []).map((m) => ({ role: m.role, content: m.content, queries: m.queries }));
+    scrollBottom();
+  } catch (e) {
+    toastError(e);
+  }
+}
+
+async function removeConversation(c) {
+  try {
+    await ElMessageBox.confirm(`删除对话「${c.title || '新对话'}」？`, '提示', { type: 'warning' });
+  } catch (e) {
+    return;
+  }
+  try {
+    await api.delete(`/ai/conversations/${c.id}`);
+    if (currentId.value === c.id) newConversation();
+    await loadConversations();
+  } catch (e) {
+    toastError(e);
   }
 }
 
@@ -210,11 +279,29 @@ onMounted(async () => {
   } catch (e) {
     /* ignore */
   }
+  await loadConversations();
+  if (conversations.value.length) {
+    await openConversation(conversations.value[0].id);
+  }
 });
 </script>
 
 <style scoped>
 .ai-page { display: flex; flex-direction: column; }
+.chat-layout { display: flex; gap: 14px; }
+.conv-side { width: 210px; flex-shrink: 0; border-right: 1px solid #eef1f6; padding-right: 12px; display: flex; flex-direction: column; }
+.new-btn { width: 100%; margin-bottom: 10px; }
+.conv-list { flex: 1; overflow-y: auto; max-height: calc(100vh - 330px); }
+.conv-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; color: #35455e; font-size: 13px; }
+.conv-item:hover { background: #f2f6fc; }
+.conv-item.active { background: #e8f2ff; color: #16508f; }
+.conv-ico { flex-shrink: 0; }
+.conv-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv-del { opacity: 0; color: #9aa6b8; display: inline-flex; }
+.conv-item:hover .conv-del { opacity: 1; }
+.conv-del:hover { color: #f56c6c; }
+.conv-empty { color: #9aa6b8; font-size: 12.5px; padding: 12px 10px; }
+.chat-main { flex: 1; min-width: 0; }
 .chat-box {
   height: calc(100vh - 320px);
   min-height: 320px;
@@ -251,5 +338,8 @@ onMounted(async () => {
 @media (max-width: 768px) {
   .bubble { max-width: 100%; }
   .chat-box { height: auto; max-height: 60vh; }
+  .chat-layout { flex-direction: column; }
+  .conv-side { width: 100%; border-right: none; border-bottom: 1px solid #eef1f6; padding: 0 0 10px; }
+  .conv-list { max-height: 150px; }
 }
 </style>

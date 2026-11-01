@@ -88,15 +88,34 @@ function tryParseSql(content) {
   return null;
 }
 
+function nowText() {
+  const d = new Date();
+  try {
+    return new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(d);
+  } catch (e) {
+    return d.toISOString();
+  }
+}
+
 function baseRules() {
   return [
     '你是「海易贸 · 生鲜外贸ERP」的智能助手，服务于生鲜进口外贸业务（采购、国际货运、保税冷链仓储、落地成本、销售出库、温控）。',
+    `当前系统时间：${nowText()}（时区 Asia/Shanghai）。回答“今天/现在/本周/星期几”等时间相关问题时，必须以此为准，不要凭记忆猜测。`,
     '你可以访问系统数据库（SQLite）来回答问题。可用的表结构如下：',
     getSchemaText(),
     '',
     '查询规则：',
     '1. 当你需要查询数据时，只输出一个 JSON 对象，格式为 {"sql":"SELECT ..."}，不要输出任何其它文字、不要用代码块包裹。',
-    '2. SQL 必须是只读的单条 SELECT 或 WITH 查询，禁止任何写操作；必要时使用 date(\'now\') 处理日期，必要时可用 LIMIT。',
+    '2. SQL 必须是只读的单条 SELECT 或 WITH 查询，禁止任何写操作；涉及“今天/当前”日期时使用 date(\'now\', \'localtime\', \'+8 hours\') 处理，必要时可用 LIMIT。',
     '3. 如果问题无需查询即可回答（如概念解释），或你已获得足够数据，直接用简体中文给出结论性的自然语言回答，不要输出 JSON。',
     '4. 回答要简洁、专业，涉及金额、重量、箱数时给出关键数字；可给出简短建议。',
     '5. 软删除数据需过滤 is_deleted = 0（若该表有该字段）。',
@@ -106,11 +125,12 @@ function baseRules() {
 function dataRules() {
   return [
     '你是「海易贸 · 生鲜外贸ERP」的数据分析助手。用户会用自然语言提出数据统计/查询需求。',
+    `当前系统时间：${nowText()}（时区 Asia/Shanghai）。涉及“今天/当前/本周”等时间范围时以此为准。`,
     '系统数据库（SQLite）可用表结构如下：',
     getSchemaText(),
     '',
     '要求：把用户问题翻译成一条只读 SQL，并只输出 JSON：{"sql":"SELECT ..."}，不要输出任何其它文字、不要用代码块包裹。',
-    'SQL 必须是单条 SELECT 或 WITH，禁止写操作；使用 date(\'now\') 处理日期；聚合查询请给出有意义的列别名。',
+    'SQL 必须是单条 SELECT 或 WITH，禁止写操作；涉及“今天/当前”日期时使用 date(\'now\', \'localtime\', \'+8 hours\') 处理；聚合查询请给出有意义的列别名。',
     '若表含 is_deleted 字段，需过滤 is_deleted = 0。',
   ].join('\n');
 }
